@@ -1,11 +1,12 @@
 import { View, Text } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import AnimatedIntro from "../components/AnimatedIntro";
+// import AnimatedIntro from "../components/AnimatedIntro";
 
 export default function Index() {
   return (
     <SafeAreaView className="flex-1 bg-slate-800 justify-center items-center">
-      <AnimatedIntro />
+      {/* <AnimatedIntro /> */}
+      <Text className="text-white text-2xl">Bem-vindo ao Umbrella App!</Text>
     </SafeAreaView>
   );
 }
