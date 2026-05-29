@@ -2,12 +2,12 @@
 import * as SecureStore from 'expo-secure-store';
 
 // Substitua pelo IP da sua máquina onde a API do Express está rodando
-const API_URL = 'http://192.168.101.16:8060';
-const API_TOKEN_URL = 'http://192.168.101.52:3730';
+const API_URL = 'http://192.168.101.16:8060/api';
+const API_TOKEN_URL = 'http://192.168.101.52:3730/api';
 
 export const loginUsuario = async (usuario, senha) => {
   try {
-    const response = await fetch(`${API_URL}/api/auth`, {
+    const response = await fetch(`${API_URL}/auth`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
