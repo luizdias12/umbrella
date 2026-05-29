@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { View, Text, Button } from "react-native";
 import { useAuth } from "../../contexts/AuthContext";
 import { DropdownCustom } from "../../components/DropdownCustom";
+import { getApiUrl } from "../../config/api";
 
 export default function PerfilScreen() {
   const { usuario } = useAuth();
@@ -9,7 +10,7 @@ export default function PerfilScreen() {
   const [valorSelecionado, setValorSelecionado] = useState(null);
   const [anoSelecionado, setAnoSelecionado] = useState(null);
 
-  const API_URL = "http://192.168.101.16:8060/api/";
+  const API_URL = getApiUrl();
 
   const mesesAno = [
     { label: "Janeiro", value: "01" },

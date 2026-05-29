@@ -1,7 +1,6 @@
-// src/services/authService.ts
+import { getApiUrl } from '../config/api';
 
-// Substitua pelo IP da sua máquina onde a API do Express está rodando
-const API_URL = "http://192.168.101.52:3730/api";
+const API_URL = getApiUrl();
 
 export const loginUsuario = async (usuario: string, senha: string) => {
   const response = await fetch(`${API_URL}/login`, {
