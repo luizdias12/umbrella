@@ -2,48 +2,46 @@ import { getApiUrl } from '../config/api';
 
 const API_URL = getApiUrl();
 
+async function fetchWithTimeout(url: string, options: RequestInit, timeout = 8000) {
+  const controller = new AbortController();
+  const id = setTimeout(() => controller.abort(), timeout);
+  try {
+    const response = await fetch(url, { ...options, signal: controller.signal });
+    return response;
+  } finally {
+    clearTimeout(id);
+  }
+}
+
 export const loginUsuario = async (usuario: string, senha: string) => {
-  const response = await fetch(`${API_URL}/login`, {
+  const response = await fetchWithTimeout(`${API_URL}/login`, {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ usuario, senha }),
   });
 
   if (!response.ok) {
-    // Captura o erro retornado pelo seu ApiError do backend
-    throw new Error("Erro ao fazer login", {  cause: await response.json().catch(() => response.statusText) });
+    throw new Error("Erro ao fazer login", {
+      cause: await response.json().catch(() => response.statusText),
+    });
   }
 
   const data = await response.json();
-  console.log("🚀 ~ loginUsuario ~ data:", data);
 
-  if (data.usuario.nome) {
+  if (data.usuario?.nome) {
     try {
-      const responseFunc = await fetch(
-        `${API_URL}/func/nome/${data.usuario.nome}`,
-        {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        },
+      const responseFunc = await fetchWithTimeout(
+        `${API_URL}/func/nome/${encodeURIComponent(data.usuario.nome)}`,
+        { method: "GET", headers: { "Content-Type": "application/json" } },
       );
 
-      const dataFunc = await responseFunc.json();
-
-      if (!responseFunc.ok) {
-        throw new Error(
-          dataFunc.message || "Dados do funcionário não encontrados",
-        );
+      if (responseFunc.ok) {
+        data.funcionario = await responseFunc.json();
       }
-      data.funcionario = dataFunc; // Adiciona os dados do funcionário à resposta final
     } catch (error) {
-      // console.error("Erro ao buscar dados do funcionário:", error);
-      throw new Error("Falha ao obter dados do funcionário.", { cause: error });
+      console.warn("Falha ao buscar dados do funcionário (não crítico):", error);
     }
   }
 
-  return data; // Retorna os dados do usuário e o token
+  return data;
 };

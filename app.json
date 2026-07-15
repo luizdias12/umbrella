@@ -3,7 +3,6 @@
     "name": "umbrella",
     "slug": "umbrella",
     "version": "1.0.0",
-
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "umbrella",
@@ -37,7 +36,8 @@
           }
         }
       ],
-      "expo-secure-store"
+      "expo-secure-store",
+      "expo-image"
     ],
     "experiments": {
       "typedRoutes": true,
