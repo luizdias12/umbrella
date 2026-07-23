@@ -5,7 +5,7 @@ import { Text, View, Pressable } from "react-native";
 import { useAuth } from "../../contexts/AuthContext";
 
 // 🌟 IMPORTANTE: Importando os ícones do Expo
-import { LucideIcon, Home, User, Shield, LogOut, Menu } from "lucide-react-native"; 
+import { LucideIcon, Home, User, Shield, DollarSign, LogOut, Menu } from "lucide-react-native"; 
 
 export default function DrawerLayout() {
   const { usuario, encerrarSessao } = useAuth();
@@ -51,6 +51,11 @@ export default function DrawerLayout() {
                   label = "Admin";
                 }
 
+                if (route.name === "holerite") {
+                  IconComponent = DollarSign;
+                  label = "Holerite";
+                }
+
                 return (
                   <Pressable
                     key={route.key}
@@ -84,8 +89,9 @@ export default function DrawerLayout() {
         )}
       >
         <Drawer.Screen name="index" options={{ title: "Menu" }} />
-        <Drawer.Screen name="perfil" options={{ title: "Configurações" }} />
+        <Drawer.Screen name="perfil" options={{ title: "Perfil" }} />
         <Drawer.Screen name="admin" options={{ title: "Admin" }} />
+        <Drawer.Screen name="holerite" options={{ title: "Holerite" }} />
       </Drawer>
     </GestureHandlerRootView>
   );

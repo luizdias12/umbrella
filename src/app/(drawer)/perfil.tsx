@@ -1,78 +1,68 @@
 import { useState, useEffect } from "react";
-import { View, Text, Button } from "react-native";
+import { View, Text, Pressable, Image } from "react-native";
+import * as ImagePicker from "expo-image-picker";
+import { File, Paths } from "expo-file-system";
 import { useAuth } from "../../contexts/AuthContext";
-import { DropdownCustom } from "../../components/DropdownCustom";
-import { getApiUrl } from "../../config/api";
+
+const fotoArquivo = new File(Paths.document, "avatar.jpg");
 
 export default function PerfilScreen() {
   const { usuario } = useAuth();
-  const [dados, setDados] = useState(null);
-  const [valorSelecionado, setValorSelecionado] = useState(null);
-  const [anoSelecionado, setAnoSelecionado] = useState(null);
+  const [fotoUri, setFotoUri] = useState<string | null>(null);
 
-  const API_URL = getApiUrl();
+  useEffect(() => {
+    (async () => {
+      if (fotoArquivo.exists) setFotoUri(fotoArquivo.uri);
+    })();
+  }, []);
 
-  const mesesAno = [
-    { label: "Janeiro", value: "01" },
-    { label: "Fevereiro", value: "02" },
-    { label: "Março", value: "03" },
-    { label: "Abril", value: "04" },
-    { label: "Maio", value: "05" },
-    { label: "Junho", value: "06" },
-    { label: "Julho", value: "07" },
-    { label: "Agosto", value: "08" },
-    { label: "Setembro", value: "09" },
-    { label: "Outubro", value: "10" },
-    { label: "Novembro", value: "11" },
-    { label: "Dezembro", value: "12" },
-  ];
+  async function selecionarFoto() {
+    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (status !== "granted") return;
 
-  const anos = Array.from({ length: 3 }, (_, i) => {
-    const anoAtual = new Date().getFullYear();
-    return {
-      label: (anoAtual - i).toString(),
-      value: (anoAtual - i).toString(),
-    };
-  });
+    const result = await ImagePicker.launchImageLibraryAsync({
+      allowsEditing: true,
+      aspect: [1, 1],
+      quality: 0.8,
+    });
+
+    if (!result.canceled && result.assets[0]) {
+      const origem = new File(result.assets[0].uri);
+      origem.copy(fotoArquivo);
+      setFotoUri(fotoArquivo.uri);
+    }
+  }
+
+  const iniciais = usuario?.nome
+    ?.split(" ")
+    .map((n) => n[0])
+    .join("")
+    .slice(0, 2)
+    .toUpperCase();
 
   return (
     <View className="flex-1 bg-slate-900 justify-center items-center px-6">
-      <View>
-        <Text className="text-2xl font-bold text-white mb-2">
-          Perfil de {usuario?.nome}
-        </Text>
-        <Text className="text-slate-400 text-center">
-          Email: {usuario?.email}
-        </Text>
-      </View>
-      <View className="flex-row gap-2 bg-slate-900 p-4">
-        <View className="flex-1">
-          <DropdownCustom
-            label="Selecione o Mês"
-            data={mesesAno}
-            value={valorSelecionado}
-            onChange={setValorSelecionado}
-            placeholder="Escolha um mês..."
+      <Pressable onPress={selecionarFoto} className="mb-4">
+        {fotoUri ? (
+          <Image
+            source={{ uri: fotoUri }}
+            className="w-24 h-24 rounded-full"
           />
-        </View>
-        <View className="flex-1">
-          <DropdownCustom
-            label="Selecione o Ano"
-            data={anos}
-            value={anoSelecionado}
-            onChange={setAnoSelecionado}
-            placeholder="Escolha um ano..."
-          />
-        </View>
-      </View>
-      <View className="flex-row gap-2 mt-4">
-        {valorSelecionado && anoSelecionado && (
-          <Button className="bg-blue-500 text-white p-2 rounded" title="Buscar" onPress={() => {
-            setValorSelecionado(null);
-            setAnoSelecionado(null);
-          }} />
+        ) : (
+          <View className="w-24 h-24 rounded-full bg-cyan-600 items-center justify-center">
+            <Text className="text-white text-3xl font-bold">{iniciais}</Text>
+          </View>
         )}
-      </View>
+      </Pressable>
+      <Text className="text-2xl font-bold text-white mb-2">
+        {usuario?.nome}
+      </Text>
+      <Text className="text-slate-400 text-center mt-1">
+        {usuario?.chapa} - {usuario?.funcao}
+      </Text>
+      <Text className="text-slate-400 text-center">
+        Email: {usuario?.email}
+      </Text>
     </View>
   );
 }
