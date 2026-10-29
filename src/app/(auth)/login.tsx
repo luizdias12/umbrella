@@ -10,6 +10,7 @@ import {
 } from "react-native";
 import { useAuth } from "../../contexts/AuthContext"; // 🌟 Importa o seu Contexto de Autenticação
 import CustomAlert from "../../components/CustomAlert";
+import CampoTexto from "../../components/CampoTexto";
 import { loginUsuario } from "../../services/authService";
 
 import { LucideIcon, LogIn } from "lucide-react-native"; 
@@ -70,6 +71,7 @@ export default function LoginScreen() {
             <CustomAlert
               message={alertMessage}
               onClose={() => setShowAlert(false)}
+              fecharLabel="Fechar"
             />
           </View>
         )}
@@ -86,53 +88,36 @@ export default function LoginScreen() {
           {/* Formulário */}
           <View className="space-y-4">
             {/* Input de Usuário */}
-            <View>
-              <Text className="text-slate-300 text-sm font-medium mb-2">
-                Usuário
-              </Text>
-              <TextInput
-                className="w-full bg-slate-800 text-white px-4 py-3 rounded-xl border border-slate-700 focus:border-cyan-400"
-                placeholder="Usuário AD"
-                placeholderTextColor="#64748b"
-                keyboardType="default"
-                autoCapitalize="none"
-                autoCorrect={false}
-                value={username}
-                onChangeText={setUsername}
-              />
-            </View>
+            <CampoTexto
+              label="Usuário"
+              placeholder="Usuário AD"
+              value={username}
+              onChangeText={setUsername}
+            />
 
             {/* Input de Senha */}
-            <View className="mt-4">
-              <Text className="text-slate-300 text-sm font-medium mb-2">
-                Senha
-              </Text>
-              <View className="relative w-full justify-center">
-                <TextInput
-                  className="w-full bg-slate-800 text-white pl-4 pr-16 py-3 rounded-xl border border-slate-700 focus:border-cyan-400"
-                  placeholder="••••••••"
-                  placeholderTextColor="#64748b"
-                  secureTextEntry={!showPassword}
-                  autoCapitalize="none"
-                  autoCorrect={false}
-                  value={password}
-                  onChangeText={setPassword}
-                />
+            <CampoTexto
+              label="Senha"
+              placeholder="••••••••"
+              value={password}
+              onChangeText={setPassword}
+              secureTextEntry={!showPassword}
+            />
 
-                {/* Botão de Mostrar/Esconder Senha dentro do Input */}
-                <Pressable
-                  onPress={() => setShowPassword(!showPassword)}
-                  className="absolute right-4 active:opacity-60 h-full justify-center"
-                >
-                  <Text className="text-cyan-400 text-xs font-bold">
-                    {showPassword ? "OCULTAR" : "MOSTRAR"}
-                  </Text>
-                </Pressable>
-              </View>
-            </View>
+            {/* Botão de Mostrar/Esconder Senha */}
+            <Pressable
+              onPress={() => setShowPassword((v) => !v)}
+              className="self-end mt-2 active:opacity-60"
+              accessibilityRole="button"
+              accessibilityLabel={showPassword ? "Ocultar senha" : "Mostrar senha"}
+            >
+              <Text className="text-cyan-400 text-xs font-bold">
+                {showPassword ? "OCULTAR" : "MOSTRAR"}
+              </Text>
+            </Pressable>
 
             {/* Esqueceu a senha */}
-            <Pressable className="align-self-end mt-2 active:opacity-70">
+            <Pressable className="self-end mt-2 active:opacity-70">
               <Text className="text-cyan-400 text-xs font-medium text-right mt-1">
                 Esqueceu sua senha?
               </Text>
